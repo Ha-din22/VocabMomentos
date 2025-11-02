@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Learning App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .mode-btn {
+            padding: 10px 25px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .welcome-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .welcome-section p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .start-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .start-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-section {
+            display: none;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .progress {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .example-sentence {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.2em;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .control-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .next-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .next-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .restart-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .restart-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .result-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .result-stats {
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        .close-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .close-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-info {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .mode-toggle {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .quiz-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Vocabulary Learning App</h1>
+            <p>Belajar vocabulary dengan metode multiple choice yang efektif</p>
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="setMode('en')">Inggris → Indonesia</button>
+                <button class="mode-btn" onclick="setMode('id')">Indonesia → Inggris</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section" id="welcomeSection">
+                <h2>🎯 Selamat Datang!</h2>
+                <p>Website ini berisi 502 vocabulary dengan contoh kalimat lengkap. Pilih mode belajar dan mulai quiz sekarang!</p>
+                <button class="start-btn" onclick="startQuiz()">Mulai Belajar</button>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-header">
+                    <div class="progress" id="progress">Pertanyaan 1 dari 502</div>
+                    <div class="score" id="score">Skor: 0</div>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-text" id="questionText">Loading...</div>
+                    <div class="example-sentence" id="exampleSentence">Loading...</div>
+                    <div class="options" id="options"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="control-btn restart-btn" onclick="restartQuiz()">Ulangi</button>
+                    <button class="control-btn next-btn" id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <h2>🎉 Quiz Selesai!</h2>
+            <div class="stats-info">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalQuestions">502</div>
+                    <div class="stat-label">Total Pertanyaan</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="correctAnswers">0</div>
+                    <div class="stat-label">Benar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="wrongAnswers">0</div>
+                    <div class="stat-label">Salah</div>
+                </div>
+            </div>
+            <div class="result-stats">
+                <p>Skor Akhir: <span id="finalScore">0%</span></p>
+            </div>
+            <button class="close-btn" onclick="closeResult()">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // Data vocabulary dari Excel (502 entri)
+        const vocabularyData = [
+            {english: "Available", indonesian: "Tersedia", sentence: "The document is available for download on the official website."},
+            {english: "Financial", indonesian: "Keuangan", sentence: "She is responsible for managing the company's financial reports."},
+            {english: "Process", indonesian: "Proses", sentence: "Learning a new language is a long but rewarding process."},
+            {english: "Individual", indonesian: "Individu", sentence: "Each individual has the right to express their opinion."},
+            {english: "Specific", indonesian: "Spesifik", sentence: "Please give me a specific example so I can understand better."},
+            {english: "Principle", indonesian: "Prinsip", sentence: "Honesty is one of the main principles in our organization."},
+            {english: "Estimate", indonesian: "Perkiraan, memperkirakan", sentence: "The total cost is estimated to be around $5,000."},
+            {english: "Variables", indonesian: "Variabel", sentence: "In this experiment, temperature and pressure are the main variables."},
+            {english: "Method", indonesian: "Metode", sentence: "We used a new teaching method to make the class more engaging."},
+            {english: "Data", indonesian: "Data", sentence: "The latest sales data shows an increase in customer demand."},
+            {english: "Research", indonesian: "Penelitian", sentence: "She is conducting research on renewable energy sources."},
+            {english: "Contract", indonesian: "Kontrak", sentence: "They signed a one-year contract with the supplier."},
+            {english: "Environment", indonesian: "Lingkungan", sentence: "We need to protect the environment for future generations."},
+            {english: "Export", indonesian: "Ekspor", sentence: "The company exports coffee beans to more than 20 countries."},
+            {english: "Source", indonesian: "Sumber", sentence: "Books are a great source of knowledge and inspiration."},
+            {english: "Assessment", indonesian: "Penilaian", sentence: "The teacher will conduct an assessment at the end of the course."},
+            {english: "Policy", indonesian: "Kebijakan", sentence: "The government introduced a new policy on waste management."},
+            {english: "Identified", indonesian: "Diidentifikasi", sentence: "The problem was identified during the quality inspection."},
+            {english: "Create", indonesian: "Membuat", sentence: "The artist plans to create a mural for the community center."},
+            {english: "Derived", indonesian: "Diturunkan", sentence: "The formula is derived from basic mathematical principles."},
+            {english: "Factors", indonesian: "Faktor", sentence: "Several factors contribute to the success of a business."},
+            {english: "Procedure", indonesian: "Prosedur", sentence: "Please follow the safety procedure when operating the machine."},
+            {english: "Definition", indonesian: "Definisi", sentence: "The definition of success can vary from person to person."},
+            {english: "Assume", indonesian: "Berasumsi", sentence: "Don't assume she's angry just because she's quiet."},
+            {english: "Theory", indonesian: "Teori", sentence: "Einstein's theory of relativity changed modern physics."},
+            {english: "Benefit", indonesian: "Manfaat", sentence: "Regular exercise has many health benefits."},
+            {english: "Evidence", indonesian: "Bukti", sentence: "The lawyer presented strong evidence to support his case."},
+            {english: "Established", indonesian: "Didirikan", sentence: "The company was established in 1995."},
+            {english: "Authority", indonesian: "Otoritas", sentence: "The local authority is responsible for maintaining public parks."},
+            {english: "Major", indonesian: "Utama", sentence: "Education is a major concern for the government."},
+            {english: "Issues", indonesian: "Isu", sentence: "The meeting focused on environmental issues."},
+            {english: "Labour", indonesian: "Buruh", sentence: "The factory employs more than 500 labourers."},
+            {english: "Occur", indonesian: "Terjadi, muncul", sentence: "Accidents can occur if safety rules are ignored."},
+            {english: "Economic", indonesian: "Berhubungan dengan ekonomi", sentence: "The country is facing an economic crisis."},
+            {english: "Involved", indonesian: "Terlibat", sentence: "She is actively involved in community projects."},
+            {english: "Percent", indonesian: "Persen", sentence: "About 60 percent of the students passed the exam."},
+            {english: "Interpretation", indonesian: "Interpretasi", sentence: "Her interpretation of the poem was very moving."},
+            {english: "Consistent", indonesian: "Konsisten", sentence: "You need to be consistent if you want to see results."},
+            {english: "Income", indonesian: "Pendapatan", sentence: "His main source of income is from his online business."},
+            {english: "Structure", indonesian: "Struktur", sentence: "The structure of the building is made of steel and glass."},
+            {english: "Legal", indonesian: "Legal", sentence: "They are seeking legal advice before starting the business."},
+            {english: "Concept", indonesian: "Konsep", sentence: "The concept of time varies in different cultures."},
+            {english: "Formula", indonesian: "Rumus", sentence: "This formula can be used to calculate the total cost."},
+            {english: "Section", indonesian: "Bagian", sentence: "Please read the first section of the report carefully."},
+            {english: "Required", indonesian: "Dibutuhkan", sentence: "A passport is required for international travel."},
+            {english: "Constitutional", indonesian: "Konstitutional", sentence: "Freedom of speech is a constitutional right."},
+            {english: "Analysis", indonesian: "Analisis", sentence: "The analysis shows a clear trend in customer preferences."},
+            {english: "Distribution", indonesian: "Distribusi", sentence: "The distribution of food supplies was completed yesterday."},
+            {english: "Function", indonesian: "Fungsi", sentence: "The heart's main function is to pump blood throughout the body."},
+            {english: "Area", indonesian: "Area", sentence: "This area is known for its beautiful beaches."},
+            {english: "Approach", indonesian: "Pendekatan, mendekat", sentence: "We need a different approach to solve this problem."},
+            {english: "Role", indonesian: "Peran", sentence: "Teachers play an important role in shaping students' futures."},
+            {english: "Legislation", indonesian: "Legislasi", sentence: "The new legislation aims to protect consumer rights."},
+            {english: "Indicate", indonesian: "Mengindikasikan", sentence: "The results indicate that the treatment is effective."},
+            {english: "Response", indonesian: "Respons", sentence: "Her quick response saved the child from danger."},
+            {english: "Period", indonesian: "Periode", sentence: "The project must be completed within a six-month period."},
+            {english: "Context", indonesian: "Konteks", sentence: "You need to understand the context before making a judgment."},
+            {english: "Significant", indonesian: "Signifikan", sentence: "There has been a significant improvement in her grades."},
+            {english: "Similar", indonesian: "Mirip", sentence: "These two paintings look very similar, but one is a copy."},
+            {english: "Community", indonesian: "Masyarakat", sentence: "The community worked together to clean the park."},
+            {english: "Resident", indonesian: "Penduduk", sentence: "The residents of the town are friendly and welcoming."},
+            {english: "Range", indonesian: "Jangkauan", sentence: "The store offers a wide range of products."},
+            {english: "Construction", indonesian: "Konstruksi", sentence: "The construction of the new bridge will take two years."},
+            {english: "Strategies", indonesian: "Strategi", sentence: "We need to develop effective strategies to increase sales."},
+            {english: "Elements", indonesian: "Elemen", sentence: "Trust and communication are key elements of a strong relationship."},
+            {english: "Previous", indonesian: "Sebelumnya", sentence: "Her previous job was in the marketing department."},
+            {english: "Conclusion", indonesian: "Kesimpulan", sentence: "The conclusion of the report highlights three main findings."},
+            {english: "Security", indonesian: "Keamanan", sentence: "The building has tight security to protect its residents."},
+            {english: "Aspects", indonesian: "Aspek", sentence: "We must consider all aspects of the problem before deciding."},
+            {english: "Acquisition", indonesian: "Akuisisi", sentence: "The company announced the acquisition of a smaller competitor."},
+            {english: "Features", indonesian: "Fitur", sentence: "This smartphone has new features like face recognition."},
+            {english: "Text", indonesian: "Teks", sentence: "Please read the text carefully before answering the questions."},
+            {english: "Commission", indonesian: "Komisi", sentence: "She earns a 10% commission on every sale she makes."},
+            {english: "Regulations", indonesian: "Regulasi", sentence: "New safety regulations will take effect next month."},
+            {english: "Computer", indonesian: "Komputer", sentence: "He bought a new computer for work and gaming."},
+            {english: "Items", indonesian: "Barang", sentence: "All items must be checked before leaving the store."},
+            {english: "Consumer", indonesian: "Konsumen", sentence: "The company focuses on delivering value to its consumers."},
+            {english: "Achieve", indonesian: "Mencapai", sentence: "With hard work, you can achieve your goals."},
+            {english: "Final", indonesian: "Final", sentence: "The final exam will be held next Friday."},
+            {english: "Positive", indonesian: "Positif", sentence: "She always tries to keep a positive attitude in difficult situations."},
+            {english: "Evaluation", indonesian: "Evaluasi", sentence: "The teacher gave a detailed evaluation of each student's work."},
+            {english: "Assistance", indonesian: "Bantuan", sentence: "We received great assistance from the volunteers during the event."},
+            {english: "Normal", indonesian: "Normal", sentence: "It's normal to feel nervous before a big presentation."},
+            {english: "Relevant", indonesian: "Relevan", sentence: "Your skills are highly relevant to this job position."},
+            {english: "Distinction", indonesian: "Perbedaan", sentence: "There is a clear distinction between the two types of products."},
+            {english: "Region", indonesian: "Wilayah", sentence: "This region is famous for its beautiful mountains."},
+            {english: "Traditional", indonesian: "Tradisional", sentence: "They prefer traditional methods of farming."},
+            {english: "Impact", indonesian: "Dampak", sentence: "The impact of this decision will be felt for generations."},
+            {english: "Consequences", indonesian: "Konsekuensi", sentence: "We must consider the consequences before taking action."},
+            {english: "Chapter", indonesian: "Bab", sentence: "I just finished reading the first chapter of the book."},
+            {english: "Equation", indonesian: "Persamaan", sentence: "You need to solve the equation to find the correct answer."},
+            {english: "Appropriate", indonesian: "Sesuai", sentence: "Please wear appropriate clothing for the meeting."},
+            {english: "Resources", indonesian: "Sumber Daya", sentence: "We have limited resources to complete this project."},
+            {english: "Participation", indonesian: "Partisipasi", sentence: "Your participation in the workshop is highly appreciated."},
+            {english: "Survey", indonesian: "Survei", sentence: "The survey results will be published next week."},
+            {english: "Potential", indonesian: "Potensi", sentence: "She has great potential to become a successful leader."},
+            {english: "Cultural", indonesian: "Budaya", sentence: "We should preserve our cultural heritage for future generations."},
+            {english: "Transfer", indonesian: "Pindah", sentence: "He plans to transfer to another university next semester."},
+            {english: "Select", indonesian: "Memilih", sentence: "Select the correct answer from the list of options."},
+            {english: "Credit", indonesian: "Kredit", sentence: "She received full credit for her contribution to the project."},
+            {english: "Affect", indonesian: "Mempengaruhi", sentence: "The weather can greatly affect our travel plans."},
+            {english: "Categories", indonesian: "Kategori", sentence: "The library has books in various categories."},
+            {english: "Perceived", indonesian: "Dianggap", sentence: "He is perceived as a reliable and honest person."},
+            {english: "Sought", indonesian: "Dicari", sentence: "This book is highly sought by collectors."},
+            {english: "Focus", indonesian: "Fokus", sentence: "You need to focus if you want to finish on time."},
+            {english: "Purchase", indonesian: "Pembelian", sentence: "I made a purchase at the online store yesterday."},
+            {english: "Injury", indonesian: "Cedera", sentence: "He couldn't play in the game because of an injury."},
+            {english: "Site", indonesian: "Situs", sentence: "The site is under construction until next month."},
+            {english: "Journal", indonesian: "Jurnal", sentence: "She published her research in a scientific journal."},
+            {english: "Primary", indonesian: "Pokok", sentence: "Education is a primary factor in personal development."},
+            {english: "Complex", indonesian: "Kompleks", sentence: "Solving this problem is more complex than I expected."},
+            {english: "Institute", indonesian: "Institusi", sentence: "She works at a well-known research institute."},
+            {english: "Investment", indonesian: "Investasi", sentence: "They made a large investment in renewable energy."},
+            {english: "Administration", indonesian: "Administrasi", sentence: "The administration will announce the new policy tomorrow."},
+            {english: "Maintenance", indonesian: "Pemeliharaan", sentence: "Regular maintenance keeps the machine running smoothly."},
+            {english: "Design", indonesian: "Desain", sentence: "The architect presented a modern design for the building."},
+            {english: "Obtained", indonesian: "Diperoleh", sentence: "The information was obtained from a reliable source."},
+            {english: "Restricted", indonesian: "Terbatas", sentence: "Access to the area is restricted to authorized personnel only."},
+            {english: "Conduct", indonesian: "Melakukan penelitian atau perilaku (good conduct)", sentence: "He was praised for his good conduct during the event."},
+            {english: "Comments", indonesian: "Komentar", sentence: "She received many positive comments on her presentation."},
+            {english: "Convention", indonesian: "Konvensi", sentence: "The international convention will be held in Paris this year."},
+            {english: "Published", indonesian: "Dipublikasikan", sentence: "His latest book was published last month."},
+            {english: "Framework", indonesian: "Kerangka", sentence: "The plan follows a clear framework for development."},
+            {english: "Implies", indonesian: "Menyiratkan", sentence: "His tone of voice implies that he is unhappy with the decision."},
+            {english: "Negative", indonesian: "Negatif", sentence: "Too much sugar can have a negative effect on your health."},
+            {english: "Dominant", indonesian: "Dominan", sentence: "English is the dominant language in many countries."},
+            {english: "Illustrated", indonesian: "Diilustrasikan", sentence: "The book is illustrated with beautiful photographs."},
+            {english: "Outcomes", indonesian: "Hasil", sentence: "The project outcomes exceeded our expectations."},
+            {english: "Constant", indonesian: "Konstan", sentence: "The temperature remained constant throughout the experiment."},
+            {english: "Shift", indonesian: "Pergeseran", sentence: "There has been a major shift in consumer behavior over the past decade."},
+            {english: "Deduction", indonesian: "Deduksi", sentence: "His deduction was correct based on the available evidence."},
+            {english: "Ensure", indonesian: "Memastikan", sentence: "Please ensure that all doors are locked before leaving."},
+            {english: "Specified", indonesian: "Ditentukan", sentence: "The payment must be made within the specified time."},
+            {english: "Justification", indonesian: "Pembenaran", sentence: "There is no justification for such rude behavior."},
+            {english: "Funds", indonesian: "Dana", sentence: "The project received additional funds from the government."},
+            {english: "Reliance", indonesian: "Ketergantungan", sentence: "Her reliance on coffee to stay awake is increasing."},
+            {english: "Physical", indonesian: "Fisik", sentence: "Regular exercise improves your physical health."},
+            {english: "Partnership", indonesian: "Kemitraan", sentence: "They formed a partnership to launch a new business."},
+            {english: "Location", indonesian: "Lokasi", sentence: "The hotel is in a perfect location near the beach."},
+            {english: "Link", indonesian: "Tautan, hubungan", sentence: "I sent you the link to the document via email."},
+            {english: "Coordination", indonesian: "Koordinasi", sentence: "Good coordination between team members is essential for success."},
+            {english: "Alternative", indonesian: "Altenatif", sentence: "We need to find an alternative solution to this problem."},
+            {english: "Initial", indonesian: "Awal, inisial", sentence: "The initial meeting will be held on Monday."},
+            {english: "Validity", indonesian: "Validitas", sentence: "The validity of the data must be verified before use."},
+            {english: "Task", indonesian: "Tugas", sentence: "Your task is to prepare a summary of the report."},
+            {english: "Techniques", indonesian: "Teknik", sentence: "She learned new techniques to improve her painting skills."},
+            {english: "Excluded", indonesian: "Dikeluarkan", sentence: "He was excluded from the event due to breaking the rules."},
+            {english: "Consent", indonesian: "Persetujuan", sentence: "We need your consent before we proceed with the plan."},
+            {english: "Proportion", indonesian: "Proporsi", sentence: "A large proportion of the budget goes to marketing."},
+            {english: "Demonstrate", indonesian: "Menunjukkan", sentence: "The teacher will demonstrate how to solve the problem."},
+            {english: "Reaction", indonesian: "Reaksi", sentence: "Her reaction to the news was surprising."},
+            {english: "Criteria", indonesian: "Kriteria", sentence: "The main criteria for selection are skill and experience."},
+            {english: "Minorities", indonesian: "Minoritas", sentence: "The government is working to protect the rights of minorities."},
+            {english: "Technology", indonesian: "Teknologi", sentence: "Technology is advancing rapidly in the modern world."},
+            {english: "Philosophy", indonesian: "Filsafat", sentence: "His philosophy is to always keep learning."},
+            {english: "Removed", indonesian: "Dihapus", sentence: "The outdated files were removed from the system."},
+            {english: "Sex", indonesian: "Jenis kelamin, seks", sentence: "Please indicate your sex on the application form."},
+            {english: "Compensation", indonesian: "Kompensasi", sentence: "The company offered compensation for the damaged goods."},
+            {english: "Sequence", indonesian: "Urutan", sentence: "Follow the correct sequence to complete the process."},
+            {english: "Corresponding", indonesian: "Sesuai", sentence: "Please sign in the corresponding box on the form."},
+            {english: "Maximum", indonesian: "Maksimum", sentence: "The maximum speed limit on this road is 80 km/h."},
+            {english: "Circumstances", indonesian: "Keadaan", sentence: "Under these circumstances, we have no other choice."},
+            {english: "Instance", indonesian: "Contoh", sentence: "For instance, you can try adding more details to your essay."},
+            {english: "Considerable", indonesian: "Cukup besar", sentence: "The project required a considerable amount of time and effort."},
+            {english: "Sufficient", indonesian: "Memadai", sentence: "We have sufficient resources to complete the task."},
+            {english: "Corporate", indonesian: "Korporat", sentence: "He works for a large corporate company in the city."},
+            {english: "Interaction", indonesian: "Interaksi", sentence: "There was a friendly interaction between the students and teachers."},
+            {english: "Contribution", indonesian: "Kontribusi", sentence: "Her contribution to the team's success was invaluable."},
+            {english: "Immigration", indonesian: "Imigrasi", sentence: "Immigration policies have changed in recent years."},
+            {english: "Component", indonesian: "Komponen", sentence: "Each component of the machine must be checked carefully."},
+            {english: "Constraints", indonesian: "Kendala", sentence: "We faced several constraints during the construction process."},
+            {english: "Technical", indonesian: "Teknis", sentence: "He provided technical support to solve the issue."},
+            {english: "Emphasis", indonesian: "Penekanan", sentence: "The teacher placed strong emphasis on critical thinking."},
+            {english: "Scheme", indonesian: "Skema", sentence: "The new housing scheme will benefit low-income families."},
+            {english: "Layer", indonesian: "Lapisan", sentence: "A thin layer of dust covered the furniture."},
+            {english: "Volume", indonesian: "Volume", sentence: "The volume of traffic increases during rush hour."},
+            {english: "Document", indonesian: "Dokumen", sentence: "Please submit the signed document by tomorrow."},
+            {english: "Registered", indonesian: "Terdaftar", sentence: "She is a registered member of the organization."},
+            {english: "Core", indonesian: "Pusat", sentence: "Honesty is at the core of our company values."},
+            {english: "Overall", indonesian: "Secara Keseluruhan", sentence: "Overall, the event was a great success."},
+            {english: "Emerged", indonesian: "Muncul", sentence: "A clear winner emerged after the final round."},
+            {english: "Regime", indonesian: "Rezim", sentence: "The regime introduced strict new laws."},
+            {english: "Implementation", indonesian: "Pelaksanaan", sentence: "The implementation of the plan took several months."},
+            {english: "Project", indonesian: "Proyek", sentence: "The project will be completed by the end of the year."},
+            {english: "Hence", indonesian: "Oleh karena itu", sentence: "He was tired, hence he decided to rest early."},
+            {english: "Occupational", indonesian: "Yang berkaitan dengan pekerjaan", sentence: "The company offers occupational health and safety training."},
+            {english: "Internal", indonesian: "Internal", sentence: "The internal report will be reviewed by management."},
+            {english: "Goals", indonesian: "Tujuan", sentence: "Her goals include traveling the world and learning new languages."},
+            {english: "Retained", indonesian: "Dipertahankan", sentence: "He retained his position despite the challenges."},
+            {english: "Sum", indonesian: "Jumlah", sentence: "The sum of these numbers is 150."},
+            {english: "Integration", indonesian: "Integrasi", sentence: "The integration of the two systems improved efficiency."},
+            {english: "Mechanism", indonesian: "Mekanisme", sentence: "The locking mechanism is very secure."},
+            {english: "Parallel", indonesian: "Sejajar", sentence: "The two roads run parallel to each other."},
+            {english: "Imposed", indonesian: "Dikenakan", sentence: "A fine was imposed for breaking the law."},
+            {english: "Despite", indonesian: "Meskipun", sentence: "Despite the rain, the event continued as planned."},
+            {english: "Job", indonesian: "Pekerjaan", sentence: "She got a new job in the marketing department."},
+            {english: "Parameters", indonesian: "Parameter", sentence: "The machine operates within specific parameters."},
+            {english: "Approximate", indonesian: "Kira-kira", sentence: "The cost is approximate and may change later."},
+            {english: "Label", indonesian: "Label", sentence: "Please attach a label to each package."},
+            {english: "Concentration", indonesian: "Konsentrasi", sentence: "His concentration improved after taking a short break."},
+            {english: "Principal", indonesian: "Utama", sentence: "The principal reason for the delay was bad weather."},
+            {english: "Series", indonesian: "Seri", sentence: "I just finished reading the first book in the series."},
+            {english: "Predicted", indonesian: "Diprediksi", sentence: "The results were better than the scientists predicted."},
+            {english: "Summary", indonesian: "Ringkasan", sentence: "Here is a summary of the main points discussed."},
+            {english: "Attitudes", indonesian: "Sikap", sentence: "Her attitudes toward work have changed over time."},
+            {english: "Undertaken", indonesian: "Dilakukan", sentence: "The project was undertaken by a team of experts."},
+            {english: "Cycle", indonesian: "Siklus", sentence: "The water cycle is an important part of nature."},
+            {english: "Communication", indonesian: "Komunikasi", sentence: "Good communication is essential for teamwork."},
+            {english: "Ethnic", indonesian: "Etnis", sentence: "The city is known for its rich ethnic diversity."},
+            {english: "Hypothesis", indonesian: "Hipotesis", sentence: "The scientist tested her hypothesis through several experiments."},
+            {english: "Professional", indonesian: "Profesional", sentence: "He is a highly respected professional in his field."},
+            {english: "Status", indonesian: "Status", sentence: "Her status in the company has improved over the years."},
+            {english: "Conference", indonesian: "Konferensi", sentence: "The international conference will be held in Paris."},
+            {english: "Attributed", indonesian: "Dikaitkan", sentence: "The success was attributed to the team's hard work."},
+            {english: "Annual", indonesian: "Tahunan", sentence: "The company holds an annual meeting every December."},
+            {english: "Obvious", indonesian: "Jelas", sentence: "It was obvious that she was telling the truth."},
+            {english: "Error", indonesian: "Kesalahan", sentence: "There was an error in the calculation."},
+            {english: "Implications", indonesian: "Implikasi", sentence: "The new policy has serious implications for small businesses."},
+            {english: "Apparent", indonesian: "Tampak", sentence: "It became apparent that he had forgotten the appointment."},
+            {english: "Commitment", indonesian: "Komitmen", sentence: "Her commitment to the project inspired the whole team."},
+            {english: "Subsequent", indonesian: "Selanjutnya", sentence: "The subsequent chapters explain the topic in more detail."},
+            {english: "Debate", indonesian: "Debat", sentence: "They had a lively debate about climate change."},
+            {english: "Dimensions", indonesian: "Dimensi", sentence: "The room's dimensions are larger than expected."},
+            {english: "Promote", indonesian: "Mempromosikan", sentence: "The campaign aims to promote healthy eating habits."},
+            {english: "Statistics", indonesian: "Statistik", sentence: "Statistics show a rise in internet usage worldwide."},
+            {english: "Option", indonesian: "Pilihan", sentence: "You have the option to choose between two plans."},
+            {english: "Domestic", indonesian: "Domestik", sentence: "The company focuses on domestic and international markets."},
+            {english: "Output", indonesian: "Keluaran", sentence: "The factory increased its output last month."},
+            {english: "Access", indonesian: "Akses", sentence: "Everyone should have access to quality education."},
+            {english: "Code", indonesian: "Kode", sentence: "Please enter the security code to continue."},
+            {english: "Investigation", indonesian: "Penyelidikan", sentence: "The police launched an investigation into the incident."},
+            {english: "Phase", indonesian: "Fase", sentence: "The project is now entering its final phase."},
+            {english: "Prior", indonesian: "Sebelumnya", sentence: "Prior experience is required for this position."},
+            {english: "Granted", indonesian: "Diberikan", sentence: "He was granted permission to use the library."},
+            {english: "Stress", indonesian: "Stres, penekanan", sentence: "She felt a lot of stress before the exam."},
+            {english: "Civil", indonesian: "Sipil", sentence: "The country is facing a civil rights issue."},
+            {english: "Contrast", indonesian: "Kontras", sentence: "The bright dress is in sharp contrast to the dark background."},
+            {english: "Resolution", indonesian: "Resolusi", sentence: "The resolution of the problem took several weeks."},
+            {english: "Adequate", indonesian: "Memadai", sentence: "The room has adequate lighting for reading."},
+            {english: "Alter", indonesian: "Mengubah", sentence: "He decided to alter his travel plans."},
+            {english: "Stability", indonesian: "Kestabilan", sentence: "The stability of the bridge was tested before opening."},
+            {english: "Energy", indonesian: "Energi", sentence: "Solar panels can provide clean energy."},
+            {english: "Aware", indonesian: "Sadar", sentence: "I was aware of the risks before starting."},
+            {english: "Licence", indonesian: "Lisensi", sentence: "You need a driving licence to operate this vehicle."},
+            {english: "Enforcement", indonesian: "Penegakan", sentence: "The enforcement of the new law starts next month."},
+            {english: "Draft", indonesian: "Rancangan", sentence: "They presented a draft of the proposal."},
+            {english: "Styles", indonesian: "Gaya", sentence: "The store sells clothes in many different styles."},
+            {english: "Precise", indonesian: "Tepat", sentence: "Her explanation was clear and precise."},
+            {english: "Medical", indonesian: "Medis", sentence: "She works in the medical field."},
+            {english: "Pursue", indonesian: "Mengejar", sentence: "She decided to pursue a career in law."},
+            {english: "Symbolic", indonesian: "Simbolik", sentence: "The dove is symbolic of peace."},
+            {english: "Marginal", indonesian: "Marginal", sentence: "The project made only a marginal profit."},
+            {english: "Capacity", indonesian: "Kapasitas", sentence: "The hall has a seating capacity of 500 people."},
+            {english: "Generation", indonesian: "Generasi", sentence: "This generation is growing up with advanced technology."},
+            {english: "Exposure", indonesian: "Paparan", sentence: "Too much exposure to the sun can be harmful."},
+            {english: "Decline", indonesian: "Penurunan", sentence: "There has been a decline in sales this year."},
+            {english: "Academic", indonesian: "Akademik", sentence: "He has an excellent academic record."},
+            {english: "Modified", indonesian: "Dimodifikasi", sentence: "The design was slightly modified to meet new standards."},
+            {english: "External", indonesian: "Eksternal", sentence: "The report will be reviewed by an external consultant."},
+            {english: "Psychology", indonesian: "Psikologi", sentence: "She is studying psychology at university."},
+            {english: "Fundamental", indonesian: "Mendasar", sentence: "Honesty is a fundamental value in any relationship."},
+            {english: "Adjustment", indonesian: "Penyesuaian", sentence: "Moving to a new city requires a lot of adjustment."},
+            {english: "Ratio", indonesian: "Rasio", sentence: "The ratio of teachers to students is 1 to 20."},
+            {english: "Whereas", indonesian: "Sedangkan", sentence: "He prefers coffee, whereas I like tea."},
+            {english: "Enable", indonesian: "Memungkinkan", sentence: "This feature will enable users to work faster."},
+            {english: "Version", indonesian: "Versi", sentence: "I downloaded the latest version of the app."},
+            {english: "Perspective", indonesian: "Perspektif", sentence: "From my perspective, the decision was fair."},
+            {english: "Contact", indonesian: "Kontak", sentence: "Please contact me if you have any questions."},
+            {english: "Network", indonesian: "Jaringan", sentence: "The company has built a strong business network."},
+            {english: "Facilitate", indonesian: "Memfasilitasi", sentence: "The teacher used visual aids to facilitate learning."},
+            {english: "Welfare", indonesian: "Kesejahteraan", sentence: "The government is working to improve public welfare."},
+            {english: "Transition", indonesian: "Transisi", sentence: "The transition to a new system will take time."},
+            {english: "Amendment", indonesian: "Amandemen", sentence: "The amendment to the law was passed last week."},
+            {english: "Logic", indonesian: "Logika", sentence: "Her argument was based on sound logic."},
+            {english: "Rejected", indonesian: "Ditolak", sentence: "His application was rejected due to incomplete documents."},
+            {english: "Expansion", indonesian: "Perluasan", sentence: "The company plans an expansion into new markets."},
+            {english: "Clause", indonesian: "Klausul", sentence: "The contract contains a confidentiality clause."},
+            {english: "Prime", indonesian: "Utama, masa puncak", sentence: "Education is a prime factor in personal growth."},
+            {english: "Target", indonesian: "Target", sentence: "The team met their sales target for the month."},
+            {english: "Objective", indonesian: "Tujuan, obyektif", sentence: "Our main objective is to improve customer satisfaction."},
+            {english: "Sustainable", indonesian: "Berkelanjutan", sentence: "The company is committed to using sustainable energy sources."},
+            {english: "Equivalent", indonesian: "Setara", sentence: "His income is equivalent to hers."},
+            {english: "Liberal", indonesian: "Liberal, terbuka", sentence: "She holds liberal views on social issues."},
+            {english: "Notion", indonesian: "Gagasan", sentence: "I completely disagree with the notion that money buys happiness."},
+            {english: "Substitution", indonesian: "Penggantian", sentence: "The substitution of sugar with honey made the recipe healthier."},
+            {english: "Generated", indonesian: "Dihasilkan", sentence: "The electricity was generated by solar panels."},
+            {english: "Trend", indonesian: "Tren", sentence: "The trend of online shopping is increasing rapidly."},
+            {english: "Revenue", indonesian: "Pendapatan", sentence: "The company's revenue grew by 20% last year."},
+            {english: "Compounds", indonesian: "Senyawa (kimia)", sentence: "Water and salt are simple chemical compounds."},
+            {english: "Evolution", indonesian: "Evolusi", sentence: "The theory of evolution explains how species change over time."},
+            {english: "Conflict", indonesian: "Konflik", sentence: "The two countries are trying to avoid military conflict."},
+            {english: "Image", indonesian: "Gambar", sentence: "He showed me an image of his hometown."},
+            {english: "Discretion", indonesian: "Kebijaksanaan", sentence: "The manager handled the situation with great discretion."},
+            {english: "Entities", indonesian: "Entitas", sentence: "Several entities participated in the project."},
+            {english: "Orientation", indonesian: "Orientasi", sentence: "The company offers an orientation program for new employees."},
+            {english: "Consultation", indonesian: "Konsultasi", sentence: "We had a consultation with a legal expert."},
+            {english: "Mental", indonesian: "Mental", sentence: "Exercise is important for maintaining good mental health."},
+            {english: "Monitoring", indonesian: "Pemantauan", sentence: "The project requires constant monitoring."},
+            {english: "Challenge", indonesian: "Tantangan", sentence: "Climbing the mountain was a real challenge for them."},
+            {english: "Intelligence", indonesian: "Kecerdasan", sentence: "Emotional intelligence is essential for effective leadership."},
+            {english: "Transformation", indonesian: "Transformasi", sentence: "The transformation of the old factory into a museum attracted many visitors."},
+            {english: "Presumption", indonesian: "Praduga", sentence: "His presumption about the results turned out to be wrong."},
+            {english: "Acknowledged", indonesian: "Diakui", sentence: "She acknowledged her mistake and apologized."},
+            {english: "Utility", indonesian: "Kegunaan", sentence: "The utility of this tool makes it popular among engineers."},
+            {english: "Furthermore", indonesian: "Terlebih lagi", sentence: "Furthermore, the research supports our initial hypothesis."},
+            {english: "Accurate", indonesian: "Akurat", sentence: "The data provided is accurate and reliable."},
+            {english: "Diversity", indonesian: "Keberagaman", sentence: "The city is known for its cultural diversity."},
+            {english: "Attached", indonesian: "Terlampir, terikat secara emosional", sentence: "Please see the attached file for more details."},
+            {english: "Recovery", indonesian: "Pemulihan", sentence: "After the surgery, his recovery was surprisingly fast."},
+            {english: "Assigned", indonesian: "Ditugaskan", sentence: "She was assigned to lead the new marketing project."},
+            {english: "Tapes", indonesian: "Kaset rekaman, pita", sentence: "The old tapes contained rare recordings of the singer."},
+            {english: "Motivation", indonesian: "Motivasi", sentence: "His motivation to succeed inspired the whole team."},
+            {english: "Bond", indonesian: "Ikatan, obligasi (dalam keuangan)", sentence: "There is a strong emotional bond between the two friends."},
+            {english: "Edition", indonesian: "Edisi", sentence: "This edition of the book includes updated research."},
+            {english: "Nevertheless", indonesian: "Meskipun begitu", sentence: "Nevertheless, he decided to continue despite the challenges."},
+            {english: "Transport", indonesian: "Transportasi", sentence: "Public transport in the city is fast and affordable."},
+            {english: "Cited", indonesian: "Dikutip", sentence: "The article cited several scientific studies."},
+            {english: "Fees", indonesian: "Biaya", sentence: "University tuition fees have increased this year."},
+            {english: "Scope", indonesian: "Cakupan", sentence: "The scope of the project is larger than we expected."},
+            {english: "Enhanced", indonesian: "Ditingkatkan", sentence: "The software has been enhanced with new security features."},
+            {english: "Incorporated", indonesian: "Digabungkan", sentence: "The new design incorporated feedback from customers."},
+            {english: "Instructions", indonesian: "Instruksi", sentence: "Please follow the safety instructions carefully."},
+            {english: "Subsidiary", indonesian: "Sekunder, anak perusahaan", sentence: "The company owns a subsidiary that manufactures electronics."},
+            {english: "Input", indonesian: "Masukan", sentence: "We value your input on this proposal."},
+            {english: "Abstract", indonesian: "Abstrak", sentence: "She presented an abstract of her research at the conference."},
+            {english: "Ministry", indonesian: "Kementerian", sentence: "The Ministry of Health announced new regulations."},
+            {english: "Capable", indonesian: "Mampu", sentence: "He is capable of solving complex problems."},
+            {english: "Expert", indonesian: "Ahli", sentence: "The expert provided valuable advice on the project."},
+            {english: "Preceding", indonesian: "Sebelumnya", sentence: "The preceding chapter explained the basic concepts."},
+            {english: "Display", indonesian: "Tampilan", sentence: "The museum will display ancient artifacts from Egypt."},
+            {english: "Incentive", indonesian: "Insentif", sentence: "The company offers an incentive for employees who exceed their targets."},
+            {english: "Inhibition", indonesian: "Hambatan", sentence: "Fear can be a strong inhibition to personal growth."},
+            {english: "Trace", indonesian: "Jejak, melacak", sentence: "The detective managed to trace the stolen painting."},
+            {english: "Ignored", indonesian: "Diabaikan", sentence: "His suggestions were ignored during the meeting."},
+            {english: "Incidence", indonesian: "Kejadian", sentence: "The incidence of flu cases has risen this year."},
+            {english: "Estate", indonesian: "Property", sentence: "They purchased a large estate in the countryside."},
+            {english: "Cooperative", indonesian: "Bersifat kerja sama", sentence: "The team adopted a cooperative approach to solve the problem."},
+            {english: "Revealed", indonesian: "Terungkap, diungkapkan", sentence: "The investigation revealed new evidence."},
+            {english: "Index", indonesian: "Indeks", sentence: "The book includes a detailed index for easy reference."},
+            {english: "Lecture", indonesian: "Kuliah", sentence: "The professor gave an inspiring lecture on climate change."},
+            {english: "Discrimination", indonesian: "Diskriminasi", sentence: "Laws have been created to prevent discrimination in the workplace."},
+            {english: "Overseas", indonesian: "Luar negeri", sentence: "She plans to study overseas next year."},
+            {english: "Explicit", indonesian: "Eksplisit", sentence: "He gave explicit instructions to avoid any confusion."},
+            {english: "Aggregate", indonesian: "Total", sentence: "The aggregate sales for the year exceeded expectations."},
+            {english: "Gender", indonesian: "Gender", sentence: "The survey collected data on age, gender, and income."},
+            {english: "Underlying", indonesian: "Mendasari, tersembunyi", sentence: "Poverty is an underlying cause of many social issues."},
+            {english: "Brief", indonesian: "Singkat", sentence: "Please give me a brief summary of the report."},
+            {english: "Domain", indonesian: "Wilayah, ranah", sentence: "The company dominates the technology domain."},
+            {english: "Rational", indonesian: "Rasional", sentence: "His decision was based on rational thinking."},
+            {english: "Minimum", indonesian: "Minimum", sentence: "The minimum age to vote is eighteen."},
+            {english: "Interval", indonesian: "Selang waktu", sentence: "There was a short interval between the two performances."},
+            {english: "Neutral", indonesian: "Netral", sentence: "The judge remained neutral during the trial."},
+            {english: "Migration", indonesian: "Migrasi", sentence: "Bird migration happens seasonally."},
+            {english: "Flexibility", indonesian: "Fleksibilitas", sentence: "Flexibility is important in adapting to change."},
+            {english: "Federal", indonesian: "Federal", sentence: "The federal government announced new policies."},
+            {english: "Author", indonesian: "Penulis", sentence: "The author signed copies of her latest book."},
+            {english: "Initiatives", indonesian: "Inisiatif", sentence: "The city launched new environmental initiatives."},
+            {english: "Allocation", indonesian: "Alokasi", sentence: "The allocation of funds was carefully planned."},
+            {english: "Exceed", indonesian: "Melampaui", sentence: "Sales this month exceed last month's record."},
+            {english: "Intervention", indonesian: "Intervensi", sentence: "The teacher's intervention improved the class discussion."},
+            {english: "Confirmed", indonesian: "Dikonfirmasi", sentence: "The booking was confirmed by email."},
+            {english: "Definite", indonesian: "Pasti", sentence: "We have a definite plan for the weekend."},
+            {english: "Classical", indonesian: "Klasik", sentence: "She enjoys listening to classical music."},
+            {english: "Chemical", indonesian: "Kimia", sentence: "The lab is studying a new chemical compound."},
+            {english: "Voluntary", indonesian: "Sukarela", sentence: "Joining the program is completely voluntary."},
+            {english: "Release", indonesian: "Melepaskan, rilis", sentence: "The company will release a new product next month."},
+            {english: "Visible", indonesian: "Terlihat", sentence: "The mountains were visible from the window."},
+            {english: "Finite", indonesian: "Terbatas", sentence: "The Earth's resources are finite."},
+            {english: "Publication", indonesian: "Publikasi", sentence: "The research findings will be in the next publication."},
+            {english: "Channel", indonesian: "Saluran", sentence: "The TV channel airs news every hour."},
+            {english: "File", indonesian: "Berkas", sentence: "Please upload the file to the shared folder."},
+            {english: "Thesis", indonesian: "Tesis, skripsi", sentence: "She is working on her master's thesis."},
+            {english: "Equipment", indonesian: "Peralatan", sentence: "The gym bought new fitness equipment."},
+            {english: "Disposal", indonesian: "Pembuangan", sentence: "Proper disposal of waste is important for the environment."},
+            {english: "Solely", indonesian: "Semata-mata", sentence: "He is solely responsible for the project."},
+            {english: "Deny", indonesian: "Menyangkal", sentence: "The witness will not deny what happened."},
+            {english: "Identical", indonesian: "Identik", sentence: "They wore identical outfits to the party."},
+            {english: "Submitted", indonesian: "Diserahkan", sentence: "The report was submitted on time."},
+            {english: "Grade", indonesian: "Nilai", sentence: "He received a high grade on the exam."},
+            {english: "Phenomenon", indonesian: "Fenomena", sentence: "The northern lights are a natural phenomenon."},
+            {english: "Paradigm", indonesian: "Paradigma", sentence: "This theory represents a new paradigm in science."},
+            {english: "Ultimately", indonesian: "Pada akhirnya", sentence: "Ultimately, the decision is yours to make."},
+            {english: "Extract", indonesian: "Mengekstrak", sentence: "They used a machine to extract the juice from oranges."},
+            {english: "Survive", indonesian: "Bertahan hidup", sentence: "Only the strongest animals survive in the wild."},
+            {english: "Converted", indonesian: "Diubah", sentence: "The data was converted into a readable format."},
+            {english: "Transmission", indonesian: "Transmisi", sentence: "The transmission of the signal was delayed."},
+            {english: "Global", indonesian: "Global", sentence: "Climate change is a global concern."},
+            {english: "Inferred", indonesian: "Disimpulkan", sentence: "From the evidence, it can be inferred that he was present."},
+            {english: "Guarantee", indonesian: "Jaminan, menjamin", sentence: "We offer a money-back guarantee."},
+            {english: "Advocate", indonesian: "Pendukung, menganjurkan", sentence: "She is a strong advocate for human rights."},
+            {english: "Dynamic", indonesian: "Dinamis", sentence: "The market is constantly changing and dynamic."},
+            {english: "Simulation", indonesian: "Simulasi", sentence: "The simulation showed how the system would react."},
+            {english: "Topic", indonesian: "Topik", sentence: "The teacher introduced a new topic in class."},
+            {english: "Insert", indonesian: "Memasukkan", sentence: "Please insert the key into the lock."},
+            {english: "Reverse", indonesian: "Membalik", sentence: "They decided to reverse their previous decision."},
+            {english: "Decades", indonesian: "Dekade", sentence: "The company has been growing for decades."},
+            {english: "Comprise", indonesian: "Terdiri atas", sentence: "The book comprises ten chapters."},
+            {english: "Hierarchical", indonesian: "Bersifat hierarki", sentence: "The company has a hierarchical structure."},
+            {english: "Unique", indonesian: "Unik", sentence: "Each snowflake is unique."},
+            {english: "Comprehensive", indonesian: "Menyeluruh", sentence: "The report provides a comprehensive overview of the project."},
+            {english: "Couple", indonesian: "Pasangan", sentence: "They make a lovely couple."},
+            {english: "Mode", indonesian: "Mode", sentence: "Please switch your phone to silent mode."},
+            {english: "Differentiation", indonesian: "Pembedaan", sentence: "Differentiation is important in competitive markets."},
+            {english: "Eliminate", indonesian: "Menghilangkan", sentence: "The new policy aims to eliminate corruption."},
+            {english: "Priority", indonesian: "Prioritas", sentence: "Education is a top priority for the government."},
+            {english: "Empirical", indonesian: "Empiris", sentence: "The study is based on empirical evidence."},
+            {english: "Ideology", indonesian: "Ideologi", sentence: "His political views are shaped by his ideology."},
+            {english: "Somewhat", indonesian: "Agak", sentence: "I am somewhat tired after the long journey."},
+            {english: "Aid", indonesian: "Bantuan", sentence: "The organization provides aid to disaster victims."},
+            {english: "Foundation", indonesian: "Pondasi", sentence: "The foundation of the building is very strong."},
+            {english: "Adults", indonesian: "Orang dewasa", sentence: "Adults need around eight hours of sleep each night."},
+            {english: "Adaptation", indonesian: "Adaptasi", sentence: "The movie is an adaptation of a famous novel."},
+            {english: "Quotation", indonesian: "Kutipan", sentence: "She included a quotation from Shakespeare in her essay."},
+            {english: "Contrary", indonesian: "Sebaliknya", sentence: "Contrary to popular belief, not all snakes are dangerous."},
+            {english: "Media", indonesian: "Media", sentence: "The news was widely covered by the media."},
+            {english: "Succesive", indonesian: "Berturut-turut", sentence: "The team achieved successive victories."},
+            {english: "Innovation", indonesian: "Inovasi", sentence: "The company is known for its innovation."},
+            {english: "Prohibited", indonesian: "Dilarang", sentence: "Smoking is prohibited in public areas."},
+            {english: "Isolated", indonesian: "Terisolasi", sentence: "The village is isolated from the rest of the world"},
+            {english: "Bulk", indonesian: "Jumlah besar", sentence: "They bought rice in bulk to save money."},
+            {english: "Behalf", indonesian: "Atas nama", sentence: "On behalf of the team, I thank you for your support."},
+            {english: "Unified", indonesian: "Disatukan, terpadu", sentence: "The plan was unified under a single strategy."},
+            {english: "Commenced", indonesian: "Dimulai", sentence: "The ceremony commenced at noon."},
+            {english: "Erosion", indonesian: "Erosi", sentence: "Soil erosion is a serious environmental problem."},
+            {english: "Anticipated", indonesian: "Diantisipasi", sentence: "The results were better than anticipated."},
+            {english: "Minimal", indonesian: "Minimal", sentence: "The damage to the car was minimal."},
+            {english: "Ceases", indonesian: "Berhenti", sentence: "The machine ceases to function when overheated."},
+            {english: "Vision", indonesian: "Visi", sentence: "Her vision for the company is very inspiring."},
+            {english: "Mutual", indonesian: "Timbal balik", sentence: "Their relationship is based on mutual respect."},
+            {english: "Norms", indonesian: "Norma", sentence: "Cultural norms vary from country to country."},
+            {english: "Intermediate", indonesian: "Menengah, perantara", sentence: "She is taking an intermediate English course."},
+            {english: "Manual", indonesian: "Manual", sentence: "Follow the manual for proper installation."},
+            {english: "Supplementary", indonesian: "Tambahan", sentence: "The project includes supplementary materials."},
+            {english: "Incompatible", indonesian: "Tidak cocok", sentence: "These two software programs are incompatible."},
+            {english: "Concurrent", indonesian: "Bersamaan", sentence: "The events will run concurrently over the weekend."},
+            {english: "Ethical", indonesian: "Etis", sentence: "Doctors must follow ethical guidelines."},
+            {english: "Preliminary", indonesian: "Pendahuluan", sentence: "The report is only a preliminary draft."},
+            {english: "Integral", indonesian: "Penting", sentence: "Education is an integral part of personal growth."},
+            {english: "Conversely", indonesian: "Sebaliknya", sentence: "Conversely, too much freedom can lead to chaos"},
+            {english: "Relaxed", indonesian: "Santai", sentence: "He felt relaxed after the long vacation."},
+            {english: "Confined", indonesian: "Terbatas, dikurung", sentence: "The prisoners were confined to their cells."},
+            {english: "Accomodation", indonesian: "Akomodasi", sentence: "The hotel provided free accommodation."},
+            {english: "Temporary", indonesian: "Sementara", sentence: "She took a temporary job during the summer."},
+            {english: "Distorted", indonesian: "Terdistorsi", sentence: "The sound was distorted due to poor recording."},
+            {english: "Passive", indonesian: "Pasif", sentence: "He played a passive role in the discussion."},
+            {english: "Subordinate", indonesian: "Bawahan, lebih rendah", sentence: "Employees should respect their subordinates."},
+            {english: "Analogous", indonesian: "Serupa", sentence: "Their situation is analogous to ours."},
+            {english: "Military", indonesian: "Militer", sentence: "He served in the military for five years."},
+            {english: "Scenario", indonesian: "Skenario", sentence: "In the worst-case scenario, we would lose all data."},
+            {english: "Revolution", indonesian: "Revolusi", sentence: "The revolution changed the country's government."},
+            {english: "Diminished", indonesian: "Bekurang, menurun", sentence: "Her influence has diminished over the years."},
+            {english: "Coherence", indonesian: "Keterpaduan", sentence: "The coherence of the essay made it easy to read."},
+            {english: "Suspended", indonesian: "Ditangguhkan", sentence: "The match was suspended due to heavy rain."},
+            {english: "Mature", indonesian: "Matang", sentence: "He is mature enough to make his own decisions."},
+            {english: "Assurance", indonesian: "Jaminan", sentence: "They gave assurance that the product was safe."},
+            {english: "Rigid", indonesian: "Kaku", sentence: "The schedule is too rigid to allow flexibility."},
+            {english: "Controversy", indonesian: "Kontroversi", sentence: "The decision caused a lot of controversy."},
+            {english: "Sphere", indonesian: "Lingkup", sentence: "He works in the sphere of education."},
+            {english: "Mediation", indonesian: "Mediasi", sentence: "Mediation helped resolve the dispute peacefully"},
+            {english: "Format", indonesian: "Format", sentence: "The report needs to follow a specific format."},
+            {english: "Trigger", indonesian: "Pemicu, mencentuskan", sentence: "The loud noise was the trigger for the alarm."},
+            {english: "Qualitative", indonesian: "Kualitatif", sentence: "Qualitative research focuses on understanding human behavior."},
+            {english: "Portion", indonesian: "Bagian", sentence: "A large portion of the budget was spent on marketing."},
+            {english: "Medium", indonesian: "Media", sentence: "Social media is a powerful communication medium."},
+            {english: "Coincide", indonesian: "Bertepatan", sentence: "The festival coincides with the national holiday."},
+            {english: "Violation", indonesian: "Pelanggaran", sentence: "Speeding is a violation of traffic laws."},
+            {english: "Device", indonesian: "Perangkat", sentence: "This device can connect to the internet wirelessly."},
+            {english: "Insights", indonesian: "Wawasan", sentence: "Her insights helped improve the project plan."},
+            {english: "Refine", indonesian: "Menyempurnakan", sentence: "We need to refine the design before final approval."},
+            {english: "Devoted", indonesian: "Berdedikasi", sentence: "She is devoted to her work and always gives her best."},
+            {english: "Team", indonesian: "Tim", sentence: "The team worked hard to meet the deadline."},
+            {english: "Overlap", indonesian: "Tumpang tindih", sentence: "Their schedules overlap, so they can't attend the meeting together."},
+            {english: "Attained", indonesian: "Dicapai", sentence: "He attained his goal through dedication and hard work."},
+            {english: "Restraints", indonesian: "Pembatasan", sentence: "There are restraints on spending to control the budget."},
+            {english: "Inherent", indonesian: "Melekat", sentence: "Risk is inherent in any investment."},
+            {english: "Route", indonesian: "Rute", sentence: "The fastest route will save us time."},
+            {english: "Protocol", indonesian: "Protokol", sentence: "The protocol requires everyone to wear badges."},
+            {english: "Founded", indonesian: "Didirikan", sentence: "The company was founded in 1995."},
+            {english: "Duration", indonesian: "Durasi", sentence: "The duration of the course is six weeks"},
+            {english: "Whereby", indonesian: "Di mana", sentence: "They signed an agreement whereby both parties benefit."},
+            {english: "Inclination", indonesian: "Kecenderungan", sentence: "She has an inclination towards creative thinking."},
+            {english: "Encountered", indonesian: "Ditemui", sentence: "We encountered some difficulties during the trip."},
+            {english: "Convinced", indonesian: "Yakin", sentence: "I'm convinced this is the best choice for us."},
+            {english: "Assembly", indonesian: "Pertemuan", sentence: "The assembly will start at 10 AM tomorrow."},
+            {english: "Albeit", indonesian: "Meskipun", sentence: "Albeit challenging, she finished the project on time."},
+            {english: "Enormous", indonesian: "Sangat besar", sentence: "The company made an enormous profit last year."},
+            {english: "Reluctant", indonesian: "Enggan", sentence: "He was reluctant to accept the job offer."},
+            {english: "Posed", indonesian: "Mengajukan (pertanyaan), memunculkan (masalah)", sentence: "The question posed by the interviewer was unexpected."},
+            {english: "Persistent", indonesian: "Gigih", sentence: "Her persistent efforts finally paid off."},
+            {english: "Undergo", indonesian: "Menjalani", sentence: "Patients undergo treatment for several weeks."},
+            {english: "Notwithstanding", indonesian: "Walaupun", sentence: "Notwithstanding the difficulties, they completed the project."},
+            {english: "Straightforward", indonesian: "Langsung", sentence: "The instructions were straightforward and easy to follow."},
+            {english: "Panel", indonesian: "Panel", sentence: "The panel of judges selected the winner."},
+            {english: "Odd", indonesian: "Aneh, ganjil", sentence: "It's odd that nobody noticed the mistake earlier."},
+            {english: "Intrinsic", indonesian: "Intrinsik", sentence: "Integrity is intrinsic to a good leader's character."},
+            {english: "Compiled", indonesian: "Dikumpulkan", sentence: "The data was compiled into a comprehensive report."},
+            {english: "Adjacent", indonesian: "Berdekatan", sentence: "The library is adjacent to the main campus."},
+            {english: "Integrity", indonesian: "Integritas", sentence: "Honesty and integrity are core values of the company."},
+            {english: "Forthcoming", indonesian: "Yang akan datang", sentence: "The forthcoming event promises to be exciting"},
+            {english: "Conceived", indonesian: "Dirancang", sentence: "The new building was conceived by a famous architect."},
+            {english: "So-called", indonesian: "Yang disebut", sentence: "The so-called expert gave confusing advice."},
+            {english: "Likewise", indonesian: "Demikian juga", sentence: "Likewise, I believe we should support this idea."},
+            {english: "Nonetheless", indonesian: "Walaupun begitu", sentence: "Nonetheless, she decided to continue despite the risks."},
+            {english: "Levy", indonesian: "Pungutan, memungut", sentence: "The government plans to levy a tax on luxury goods."},
+            {english: "Invoked", indonesian: "Memohon, mengutip", sentence: "He invoked a famous quote during his speech."},
+            {english: "Colleagues", indonesian: "Rekan kerja", sentence: "My colleagues helped me finish the project on time."},
+            {english: "Depression", indonesian: "Depresi", sentence: "She has been struggling with depression for years."},
+            {english: "Collapse", indonesian: "Runtuh", sentence: "The old bridge is at risk of collapse."},
+            {english: "Ongoing", indonesian: "Sedang berlangsung", sentence: "The investigation is ongoing and no conclusions have been made yet."},
+            {english: "Abandon", indonesian: "Meninggalkan, melepaskan", sentence: "They decided to abandon the old plan and start fresh."},
+            {english: "Academy", indonesian: "Akademi", sentence: "She graduated from a prestigious academy last year."},
+            {english: "Accompany", indonesian: "Menemani", sentence: "I will accompany you to the meeting tomorrow."},
+            {english: "Accurate", indonesian: "Akurat", sentence: "The measurements were accurate within a small margin of error."},
+            {english: "Adapt", indonesian: "Menyesuaikan", sentence: "We need to adapt our strategy to the new market conditions."},
+            {english: "Adjust", indonesian: "Mengatur ulang", sentence: "Please adjust the settings to improve the picture quality."},
+            {english: "Aggregate", indonesian: "Total", sentence: "The aggregate score of the teams was very close."},
+            {english: "Alteration", indonesian: "Perubahan", sentence: "The alteration in the schedule was announced yesterday."},
+            {english: "Alternative", indonesian: "Alternatif", sentence: "We should consider an alternative route to avoid traffic."},
+            {english: "Ambiguous", indonesian: "Ambigu", sentence: "The instructions were ambiguous and hard to follow."},
+            {english: "Analogy", indonesian: "Analogi", sentence: "An analogy can help explain complex ideas."},
+            {english: "Anticipation", indonesian: "Antisipasi", sentence: "In anticipation of the storm, they stocked up on supplies."},
+            {english: "Appendix", indonesian: "Lampiran, usus buntu (dalam konteks anatomi)", sentence: "The appendix contains additional information for reference."},
+            {english: "Appreciate", indonesian: "Menghargai", sentence: "I appreciate your help with this project."},
+            {english: "Arbitrary", indonesian: "Sewenang-wenang", sentence: "The decision seemed arbitrary and unfair."},
+            {english: "Assemble", indonesian: "Merakit", sentence: "The workers will assemble the parts tomorrow morning."},
+            {english: "Assess", indonesian: "Menilai", sentence: "We need to assess the situation before making a decision."},
+            {english: "Assumption", indonesian: "Asumsi", sentence: "His assumption was based on incomplete data."},
+            {english: "Authoritative", indonesian: "Otoritatif", sentence: "The report is considered authoritative on the subject."},
+            {english: "Automate", indonesian: "Mengotomatiskan", sentence: "The company plans to automate the production process."},
+            {english: "Bias", indonesian: "Bias", sentence: "Everyone has some bias when making decisions."},
+            {english: "Brevity", indonesian: "Kependekan, singkatnya", sentence: "Brevity is important in good writing."},
+            {english: "Capability", indonesian: "Kemampuan", sentence: "She has the capability to lead the team successfully."},
+            {english: "Chart", indonesian: "Bagan", sentence: "The chart shows the company's sales growth over five years."},
+            {english: "Clarify", indonesian: "Menjelaskan", sentence: "Can you clarify your point a little more?"},
+            {english: "Coherent", indonesian: "Koheren", sentence: "The essay was clear and coherent."},
+            {english: "Commodity", indonesian: "Komoditas", sentence: "Rice is a major commodity in many countries."},
+            {english: "Compatible", indonesian: "Cocok", sentence: "These two programs are compatible with each other."},
+            {english: "Compensate", indonesian: "Mengganti rugi", sentence: "The company had to compensate customers for the delay."},
+            {english: "Complement", indonesian: "Pelengkap", sentence: "The blue scarf complements her outfit perfectly."},
+            {english: "Compute", indonesian: "Menghitung", sentence: "The computer can compute large amounts of data quickly."},
+            {english: "Conceivable", indonesian: "Bisa dibayangkan", sentence: "It's conceivable that the project will be finished early."},
+            {english: "Confer", indonesian: "Memberikan gelar", sentence: "The university will confer degrees at the graduation ceremony."},
+            {english: "Confine", indonesian: "Membatasi", sentence: "The animals were confined to a small area for safety."},
+            {english: "Confirm", indonesian: "Mengonfirmasi", sentence: "We need to confirm the appointment time."},
+            {english: "Consent", indonesian: "Menyetujui", sentence: "They gave their consent to proceed with the plan."},
+            {english: "Contribute", indonesian: "Menyumbang", sentence: "Everyone wants to contribute to the charity event."},
+            {english: "Convene", indonesian: "Mengadakan", sentence: "The committee will convene next week."},
+            {english: "Convince", indonesian: "Meyakinkan", sentence: "I am convinced this is the best solution."},
+            {english: "Cooperate", indonesian: "Bekerja sama", sentence: "The countries agreed to cooperate on the project."},
+            {english: "Coordinate", indonesian: "Mengoordinasi, menyeleraskan", sentence: "She will coordinate the event with different teams."},
+            {english: "Creditor", indonesian: "Kreditur, pihak pemberi utang", sentence: "The creditor agreed to extend the loan deadline."},
+            {english: "Criterion", indonesian: "Kriteria", sentence: "Meeting the criterion is essential for admission."},
+            {english: "Currency", indonesian: "Mata uang", sentence: "The currency exchange rate changed yesterday."},
+            {english: "Debate", indonesian: "Debat", sentence: "They had a lively debate about environmental policies."},
+            {english: "Deduce", indonesian: "Menyimpulkan", sentence: "From the evidence, we can deduce the suspect's location."},
+            {english: "Demonstration", indonesian: "Unjuk rasa", sentence: "The demonstration attracted thousands of protesters."},
+            {english: "Denote", indonesian: "Menunjukkan", sentence: "The red color on the map denotes danger zones."},
+            {english: "Derive", indonesian: "Memperoleh", sentence: "Many English words derive from Latin."},
+            {english: "Detect", indonesian: "Mendeteksi", sentence: "The sensor can detect even the smallest movements."},
+            {english: "Deviate", indonesian: "Menyimpang", sentence: "He tends to deviate from the original plan."},
+            {english: "Differentiate", indonesian: "Membedakan", sentence: "It's important to differentiate between fact and opinion."},
+            {english: "Discriminate", indonesian: "Mendiskriminasi", sentence: "It's wrong to discriminate based on race or gender."},
+            {english: "Displace", indonesian: "Menggusur", sentence: "The flood displaced thousands of people."},
+            {english: "Disproportionate", indonesian: "Tidak seimbang", sentence: "The punishment was disproportionate to the crime."},
+            {english: "Distinct", indonesian: "Berbeda", sentence: "Her voice is distinct and easily recognizable."},
+            {english: "Diversify", indonesian: "Mendiversifikasi", sentence: "The company plans to diversify its product range."},
+            {english: "Emerge", indonesian: "Muncul", sentence: "New ideas continue to emerge in the tech industry."},
+            {english: "Fluctuate", indonesian: "Berfluktuasi", sentence: "Stock prices fluctuate daily."},
+            {english: "Highlight", indonesian: "Menyoroti", sentence: "The report highlights the main issues clearly."}
+        ];
+
+        let currentMode = 'en'; // 'en' for English to Indonesian, 'id' for Indonesian to English
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let answeredQuestions = [];
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            if (vocabularyData.length > 0) {
+                startQuiz();
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            currentQuestion = 0;
+            score = 0;
+            answeredQuestions = [];
+            shuffleArray(vocabularyData);
+            showQuestion();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= vocabularyData.length) {
+                showResult();
+                return;
+            }
+
+            const question = vocabularyData[currentQuestion];
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            // Prepare options based on mode
+            let correctAnswer;
+            let questionText;
+            
+            if (currentMode === 'en') {
+                questionText = question.english;
+                correctAnswer = question.indonesian;
+            } else {
+                questionText = question.indonesian;
+                correctAnswer = question.english;
+            }
+
+            // Generate wrong answers
+            const wrongAnswers = [];
+            const otherQuestions = vocabularyData.filter((_, index) => index !== currentQuestion);
+            
+            while (wrongAnswers.length < 3 && otherQuestions.length > 0) {
+                const randomIndex = Math.floor(Math.random() * otherQuestions.length);
+                const otherQuestion = otherQuestions[randomIndex];
+                let wrongAnswer;
+                
+                if (currentMode === 'en') {
+                    wrongAnswer = otherQuestion.indonesian;
+                } else {
+                    wrongAnswer = otherQuestion.english;
+                }
+
+                if (!wrongAnswers.includes(wrongAnswer)) {
+                    wrongAnswers.push(wrongAnswer);
+                    otherQuestions.splice(randomIndex, 1);
+                }
+            }
+
+            // Combine and shuffle options
+            const allOptions = [correctAnswer, ...wrongAnswers];
+            shuffleArray(allOptions);
+
+            // Display question
+            document.getElementById('questionText').textContent = questionText;
+            document.getElementById('exampleSentence').textContent = `"${question.sentence}"`;
+
+            // Create option buttons
+            allOptions.forEach((option, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.className = 'option';
+                optionBtn.textContent = option;
+                optionBtn.onclick = () => selectAnswer(option, correctAnswer, optionBtn);
+                optionsContainer.appendChild(optionBtn);
+            });
+
+            // Update progress
+            document.getElementById('progress').textContent = `Pertanyaan ${currentQuestion + 1} dari ${vocabularyData.length}`;
+            document.getElementById('score').textContent = `Skor: ${score}`;
+
+            // Reset selection
+            selectedAnswer = null;
+            document.getElementById('nextBtn').disabled = true;
+        }
+
+        function selectAnswer(selected, correct, optionElement) {
+            if (selectedAnswer !== null) return; // Prevent multiple selections
+
+            selectedAnswer = selected;
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach(option => {
+                option.onclick = null; // Disable further clicks
+                if (option.textContent === correct) {
+                    option.classList.add('correct');
+                } else if (option === optionElement && selected !== correct) {
+                    option.classList.add('incorrect');
+                }
+            });
+
+            if (selected === correct) {
+                score++;
+                document.getElementById('score').textContent = `Skor: ${score}`;
+            }
+
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            showQuestion();
+        }
+
+        function restartQuiz() {
+            shuffleArray(vocabularyData);
+            startQuiz();
+        }
+
+        function showResult() {
+            document.getElementById('totalQuestions').textContent = vocabularyData.length;
+            document.getElementById('correctAnswers').textContent = score;
+            document.getElementById('wrongAnswers').textContent = vocabularyData.length - score;
+            document.getElementById('finalScore').textContent = `${Math.round((score / vocabularyData.length) * 100)}%`;
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function closeResult() {
+            document.getElementById('resultModal').style.display = 'none';
+            document.getElementById('welcomeSection').style.display = 'block';
+            document.getElementById('quizSection').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
