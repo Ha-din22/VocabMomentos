@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vocabulary Learning App</title>
     <style>
-        * {
+       * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,7 +28,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -59,7 +59,7 @@
 
         .mode-btn.active {
             background: white;
-            color: #667eea;
+            color: #e74c3c;
         }
 
         .mode-btn:hover {
@@ -91,7 +91,7 @@
         }
 
         .start-btn {
-            background: #667eea;
+            background: #e74c3c;
             color: white;
             border: none;
             padding: 15px 40px;
@@ -103,7 +103,7 @@
         }
 
         .start-btn:hover {
-            background: #764ba2;
+            background: #c0392b;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
@@ -124,12 +124,12 @@
 
         .progress {
             font-weight: bold;
-            color: #667eea;
+            color: #e74c3c;
         }
 
         .score {
             font-weight: bold;
-            color: #28a745;
+            color: #27ae60;
         }
 
         .question-card {
@@ -154,7 +154,7 @@
             padding: 15px;
             background: white;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #e74c3c;
         }
 
         .options {
@@ -173,27 +173,27 @@
         }
 
         .option:hover {
-            border-color: #667eea;
+            border-color: #e74c3c;
             transform: translateX(5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .option.selected {
-            background: #667eea;
+            background: #e74c3c;
             color: white;
-            border-color: #667eea;
+            border-color: #e74c3c;
         }
 
         .option.correct {
-            background: #28a745;
+            background: #27ae60;
             color: white;
-            border-color: #28a745;
+            border-color: #27ae60;
         }
 
         .option.incorrect {
-            background: #dc3545;
+            background: #e74c3c;
             color: white;
-            border-color: #dc3545;
+            border-color: #e74c3c;
         }
 
         .controls {
@@ -212,12 +212,12 @@
         }
 
         .next-btn {
-            background: #667eea;
+            background: #e74c3c;
             color: white;
         }
 
         .next-btn:hover {
-            background: #764ba2;
+            background: #c0392b;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
@@ -262,7 +262,7 @@
         }
 
         .result-content h2 {
-            color: #667eea;
+            color: #e74c3c;
             margin-bottom: 20px;
             font-size: 2em;
         }
@@ -273,7 +273,7 @@
         }
 
         .close-btn {
-            background: #667eea;
+            background: #e74c3c;
             color: white;
             border: none;
             padding: 12px 30px;
@@ -284,7 +284,7 @@
         }
 
         .close-btn:hover {
-            background: #764ba2;
+            background: #c0392b;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
@@ -302,7 +302,7 @@
         .stat-value {
             font-size: 2em;
             font-weight: bold;
-            color: #667eea;
+            color: #e74c3c;
         }
 
         .stat-label {
@@ -335,8 +335,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Vocabulary Learning App</h1>
-            <p>Belajar vocabulary dengan metode multiple choice yang efektif</p>
+            <h1>Vocabulary TKA Momentos</h1>
+            <p>Belajar vocabulary dengan metode PILLGUN (Pilihan Ganda) ~BY:@thadios</p>
             <div class="mode-toggle">
                 <button class="mode-btn active" onclick="setMode('en')">Inggris → Indonesia</button>
                 <button class="mode-btn" onclick="setMode('id')">Indonesia → Inggris</button>
@@ -345,7 +345,7 @@
 
         <div class="content">
             <div class="welcome-section" id="welcomeSection">
-                <h2>🎯 Selamat Datang!</h2>
+                <h2>🎯 Wiluzeng Shumping!</h2>
                 <p>Website ini berisi 502 vocabulary dengan contoh kalimat lengkap. Pilih mode belajar dan mulai quiz sekarang!</p>
                 <button class="start-btn" onclick="startQuiz()">Mulai Belajar</button>
             </div>
